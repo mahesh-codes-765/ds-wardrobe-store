@@ -33,7 +33,7 @@ git --version
 ## 2. Get the code
 
 ```bash
-git clone https://github.com/<owner>/<repo>.git ds-wardrobe
+git clone https://github.com/mahesh-codes-765/ds-wardrobe-store.git ds-wardrobe
 cd ds-wardrobe
 npm install
 ```
