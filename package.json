@@ -12,7 +12,7 @@
     "build": "turbo build && npm --prefix apps/storefront run build",
     "lint": "turbo lint && npm --prefix apps/storefront run lint",
     "test": "turbo test",
-    "db": "npm --prefix tools/dev-db run db",
+    "db": "npm --prefix tools/dev-db install --no-audit --no-fund --silent && npm --prefix tools/dev-db run db",
     "backend:dev": "turbo dev --filter=@dtc/backend",
     "backend:seed": "turbo seed --filter=@dtc/backend",
     "storefront:dev": "npm --prefix apps/storefront run dev",

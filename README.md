@@ -19,6 +19,8 @@ Instagram / Google -> Home -> Shop / Category -> Filters, search, sort -> Produc
 
 ## Quick start (local development)
 
+> New to the project? Follow the step-by-step [SETUP.md](SETUP.md) guide.
+
 Prerequisites: **Node.js 22+**, npm, Git. Docker is optional.
 
 ```bash
