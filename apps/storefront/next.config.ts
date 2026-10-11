@@ -7,8 +7,13 @@ const backendUrl = new URL(
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Self-contained server bundle for the Docker image (apps/storefront/Dockerfile)
+  output: "standalone",
   images: {
     formats: ["image/avif", "image/webp"],
+    // Next 16 blocks optimizing images from local IPs. In development, admin
+    // uploads are served by the backend on localhost, so allow it there only.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
     remotePatterns: [
       // Demo catalogue imagery (Unsplash licence) — remove once real shoots are uploaded
       { protocol: "https", hostname: "images.unsplash.com" },

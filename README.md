@@ -1,158 +1,124 @@
-<p align="center">
-  <a href="https://www.medusajs.com">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/59018053/229103275-b5e482bb-4601-46e6-8142-244f531cebdb.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    <img alt="Medusa logo" src="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    </picture>
-  </a>
-</p>
-<h1 align="center">
-  Medusa DTC Starter
-</h1>
+# DS Wardrobe
 
-<h4 align="center">
-  <a href="https://docs.medusajs.com">Documentation</a> |
-  <a href="https://www.medusajs.com">Website</a>
-</h4>
+E-commerce store for **DS Wardrobe** (menswear, DS Women's Wear, fragrances and gifts),
+built on an open-source commerce backend with a custom, mobile-first storefront.
 
-<p align="center">
-  Building blocks for digital commerce
-</p>
-<p align="center">
-  <a href="https://github.com/medusajs/medusa/blob/develop/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Medusa is released under the MIT license." />
-  </a>
-  <a href="https://circleci.com/gh/medusajs/medusa">
-    <img src="https://circleci.com/gh/medusajs/medusa.svg?style=shield" alt="Current CircleCI build status." />
-  </a>
-  <a href="https://github.com/medusajs/medusa/blob/develop/CONTRIBUTING.md">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs welcome!" />
-  </a>
-    <a href="https://www.producthunt.com/posts/medusa"><img src="https://img.shields.io/badge/Product%20Hunt-%231%20Product%20of%20the%20Day-%23DA552E" alt="Product Hunt"></a>
-  <a href="https://discord.gg/xpCwq3Kfn8">
-    <img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Discord Chat" />
-  </a>
-  <a href="https://twitter.com/intent/follow?screen_name=medusajs">
-    <img src="https://img.shields.io/twitter/follow/medusajs.svg?label=Follow%20@medusajs" alt="Follow @medusajs" />
-  </a>
-</p>
+| | |
+|---|---|
+| Storefront | Next.js 16 (App Router, React 19, TypeScript, Tailwind CSS 4) - `apps/storefront` |
+| Commerce backend + admin | Medusa v2.21 (TypeScript, Node 22) - `apps/backend` |
+| Database / cache | PostgreSQL (required), Redis (production) |
+| Payments | Cash on Delivery (built in) + Razorpay (UPI, cards, netbanking) |
+| Search | Medusa Search Module on PostgreSQL full-text search (facets, typo tolerance) |
 
-# Medusa DTC Starter
-
-A production-ready monorepo starter for direct-to-consumer ecommerce stores powered by Medusa and Next.js. Includes a fully featured storefront with product browsing, cart, checkout, customer accounts, and order management.
-
-## Features
-
-- All of [Medusa's commerce features](https://docs.medusajs.com/resources/commerce-modules)
-- Multi-region support with automatic country detection
-- Product catalog with variant selection
-- Cart with promotion codes
-- Multi-step checkout with shipping and payment
-- Customer accounts with order history and address management
-- Order transfer between accounts
-
-## Getting Started
-
-### Deploy with Medusa Cloud
-
-The fastest way to get started is deploying with [Medusa Cloud](https://cloud.medusajs.com):
-
-1. [Create a Medusa Cloud account](https://cloud.medusajs.com)
-2. Deploy this starter directly from your dashboard
-
-### Local Installation
-
-> **Prerequisites:
->
-> - [Node.js](https://nodejs.org/) v20+
-> - [PostgreSQL](https://www.postgresql.org/) v15+
-> - [pnpm](https://pnpm.io/) v10+
-
-1. Clone the repository and install dependencies:
-
-```bash
-git clone https://github.com/medusajs/dtc-starter.git
-cd dtc-starter
-pnpm install
+```
+Instagram / Google -> Home -> Shop / Category -> Filters, search, sort -> Product
+  -> size / colour / qty -> Bag -> Guest or account checkout -> Address -> Delivery
+  -> Payment -> Order confirmation -> Order tracking / Account
 ```
 
-2. Set up environment variables for the backend:
+## Quick start (local development)
+
+Prerequisites: **Node.js 22+**, npm, Git. Docker is optional.
 
 ```bash
+# 1. Install everything (backend workspace + storefront)
+npm install
+
+# 2. Start PostgreSQL - pick ONE
+docker compose up -d          # PostgreSQL + Redis in Docker
+npm run db                    # or: portable PostgreSQL, no Docker needed (keep this terminal open)
+
+# 3. Configure the backend
 cp apps/backend/.env.template apps/backend/.env
-```
+#    then set JWT_SECRET, COOKIE_SECRET and AUTH_MFA_ENCRYPTION_KEY (see the template for a generator)
 
-3. Set the database URL in `apps/backend.env`:
-
-```bash
-# Replace with actual database URL, make sure the database exists.
-DATABASE_URL=postgres://postgres:@localhost:5432/medusa-dtc-starter
-```
-
-4. Run migrations:
-
-```bash
+# 4. Create the schema and the demo catalogue
 cd apps/backend
-pnpm medusa db:migrate
-```
+npm run db:migrate            # Medusa migrations + search index
+npm run seed                  # prints the publishable API key at the end
+npx medusa user -e you@example.com -p 'a-strong-password'   # admin login
+cd ../..
 
-5. Add admin user:
-
-```bash
-cd apps/backend
-pnpm medusa user -e admin@test.com -p supersecret
-```
-
-6. Start Medusa backend:
-
-```bash
-cd apps/backend
-pnpm dev
-```
-
-7. Open the admin dashboard at `localhost:9000/app` and log in. Retrieve your publishable API key at Settings > Publishable API key.
-
-8. Set up environment variables for the storefront:
-
-```bash
+# 5. Configure the storefront
 cp apps/storefront/.env.template apps/storefront/.env.local
+#    set NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY to the key printed by the seed
+
+# 6. Run both apps
+npm run dev
 ```
 
-9. Update `apps/storefront/.env.local` with your Medusa publishable API key:
+| URL | What |
+|---|---|
+| http://localhost:8000 | Storefront |
+| http://localhost:9000/app | Admin dashboard (products, prices, stock, orders, customers, promotions, **Reviews**, **Banners**) |
+| http://localhost:9000/store/... | Store API used by the storefront |
+
+Verify the whole purchase flow against the running backend:
 
 ```bash
-NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_6c3...
+node scripts/e2e-checkout.mjs
 ```
 
-10.  Start storefront:
+Demo coupons: `WELCOME10` (10% off), `DSFEST200` (Rs 200 off).
 
-```bash
-cd apps/storefront
-pnpm dev
+## Repository layout
+
+```
+apps/
+  backend/            Medusa application (@dtc/backend)
+    medusa-config.ts  modules, payment providers, Redis/S3 switches
+    src/modules/      custom modules: product-review, wishlist, content (banners), razorpay
+    src/workflows/    business logic for the custom modules (with compensation)
+    src/api/          custom Store + Admin API routes and validation middleware
+    src/search/       product search index definition (facets, INR prices, stock)
+    src/admin/        admin dashboard pages and widgets
+    src/scripts/      seed (India region, catalogue, coupons, banners)
+  storefront/         Next.js storefront (@ds/storefront, independent package)
+    src/app/          routes (home, shop, categories, collections, products, cart,
+                      checkout, account, track, help)
+    src/components/   UI, layout, product, shop, cart, checkout, account, home
+    src/lib/data/     server-only data layer + Server Actions (cart, checkout, auth)
+docs/                 design analysis, backend selection, architecture, env, deployment, testing
+scripts/              end-to-end checkout smoke test
+tools/dev-db/         portable PostgreSQL for machines without Docker
 ```
 
-The storefront runs on `http://localhost:8000`.
+## Documentation
 
-You can slo run the following command from the root to start both backend and storefront:
+1. [Brand & design analysis](docs/01-design-analysis.md)
+2. [Backend evaluation & selection](docs/02-backend-selection.md)
+3. [Architecture & decisions](docs/03-architecture.md)
+4. [Environment variables](docs/04-environment-variables.md)
+5. [Content, images & admin guide](docs/05-content-and-images.md)
+6. [Deployment](docs/06-deployment.md)
+7. [Testing & QA report](docs/07-testing.md)
 
-```bash
-pnpm dev
-```
+## Common commands
 
-## Configuration
+| Command (repo root) | |
+|---|---|
+| `npm run dev` | backend + storefront with hot reload |
+| `npm run backend:dev` / `npm run storefront:dev` | one app only |
+| `npm run build` | production build of both apps |
+| `npm run db` | portable PostgreSQL (no Docker) |
+| `node scripts/e2e-checkout.mjs` | customer-journey smoke test |
 
-The storefront is configured via environment variables in `apps/storefront/.env.local`:
+| Command (`apps/backend`) | |
+|---|---|
+| `npm run db:migrate` | run migrations and build search indexes |
+| `npm run seed` | idempotent demo seed |
+| `npx medusa db:generate <module>` | migration after changing a custom module model |
+| `npx medusa user -e <email> -p <password>` | create an admin user |
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` | Publishable API key from your Medusa backend | — |
-| `NEXT_PUBLIC_MEDUSA_BACKEND_URL` | URL of your Medusa backend | `http://localhost:9000` |
-| `NEXT_PUBLIC_DEFAULT_REGION` | Default region country code | `dk` |
-| `NEXT_PUBLIC_BASE_URL` | Base URL of the storefront | `https://localhost:8000` |
-| `NEXT_PUBLIC_STRIPE_KEY` | Stripe publishable key (optional) | — |
+## Troubleshooting
 
-## Resources
-
-- [Medusa Documentation](https://docs.medusajs.com)
-- [Medusa Cloud](https://cloud.medusajs.com)
+- **`Failed to load native binding` / `ERR_SWC_NATIVE_CACHE` (Windows)** - `@swc/core`
+  1.16.12+ refuses to start when its cache folder is writable by another Windows account.
+  The repo pins `@swc/core@1.16.2` via `overrides`; run `npm install` again if you see it.
+- **Rs symbol or Hindi text garbled in the database** - the database must be UTF-8.
+  `docker compose` and `npm run db` both create it as UTF-8.
+- **Storefront shows "We'll be right back"** - the backend is not reachable or
+  `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` is wrong.
+- **Products missing from search right after seeding** - the search index fills when the
+  backend starts; start `npm run dev` and wait for `[Search] Seeding "product"` in the log.
