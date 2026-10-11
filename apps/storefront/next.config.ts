@@ -1,3 +1,4 @@
+import path from "node:path"
 import type { NextConfig } from "next"
 
 const backendUrl = new URL(
@@ -9,6 +10,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Self-contained server bundle for the Docker image (apps/storefront/Dockerfile)
   output: "standalone",
+  // The storefront is an independent package; don't let Next infer the repo root
+  // (which has its own lockfile) as the workspace root.
+  outputFileTracingRoot: path.resolve(__dirname),
+  turbopack: { root: path.resolve(__dirname) },
   images: {
     formats: ["image/avif", "image/webp"],
     // Next 16 blocks optimizing images from local IPs. In development, admin
