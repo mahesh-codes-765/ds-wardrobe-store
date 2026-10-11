@@ -105,7 +105,7 @@ export function OrderSummary({
                 <p className="line-clamp-2 font-semibold">{item.product_title ?? item.title}</p>
                 <p className="text-ash">{item.variant_title}</p>
               </div>
-              <p className="text-[13px] font-semibold">{formatMoney(item.total, currency)}</p>
+              <p className="text-[13px] font-semibold">{formatMoney(item.original_total ?? item.total, currency)}</p>
             </li>
           ))}
         </ul>
@@ -114,7 +114,7 @@ export function OrderSummary({
       {showPromo ? <PromoCodeForm cart={cart} /> : null}
 
       <dl className="space-y-2.5 border-t border-line pt-5">
-        <Row label="Subtotal" value={formatMoney(cart.item_total, currency)} />
+        <Row label="Subtotal" value={formatMoney(cart.original_item_total ?? cart.item_total, currency)} />
         {discount > 0 ? <Row label="Discount" value={`- ${formatMoney(discount, currency)}`} accent /> : null}
         <Row
           label="Shipping"

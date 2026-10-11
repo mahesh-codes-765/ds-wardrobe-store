@@ -27,7 +27,7 @@ export async function listOrders(limit = 20, offset = 0) {
       limit,
       offset,
       order: "-created_at",
-      fields: "id,display_id,status,created_at,total,currency_code,payment_status,fulfillment_status,*items",
+      fields: "id,display_id,status,created_at,total,currency_code,payment_status,fulfillment_status,*items,*fulfillments",
     },
     headers,
     cache: "no-store",

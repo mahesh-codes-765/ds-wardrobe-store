@@ -28,7 +28,11 @@ export default async function CartPage() {
 
   const count = items.reduce((n, i) => n + i.quantity, 0)
   const hasStockIssue = items.some(
-    (i) => i.variant?.manage_inventory && !i.variant.allow_backorder && (i.variant.inventory_quantity ?? 0) < i.quantity
+    (i) =>
+      i.variant?.manage_inventory &&
+      !i.variant.allow_backorder &&
+      typeof i.variant.inventory_quantity === "number" &&
+      i.variant.inventory_quantity < i.quantity
   )
 
   return (

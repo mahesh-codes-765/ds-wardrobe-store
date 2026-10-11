@@ -9,6 +9,7 @@ const PRODUCT_FIELDS = [
   "+variants.inventory_quantity",
   "+variants.manage_inventory",
   "+variants.allow_backorder",
+  "+variants.metadata",
   "*variants.options",
   "*variants.images",
   "*options",

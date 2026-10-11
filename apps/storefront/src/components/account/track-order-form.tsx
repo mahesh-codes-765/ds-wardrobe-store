@@ -47,7 +47,7 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder?: string }) {
                   <p className="font-semibold">{i.title}</p>
                   <p className="text-ash">{i.variant_title} &middot; Qty {i.quantity}</p>
                 </div>
-                <p className="text-[14px] font-semibold">{formatMoney(i.total, order.currency_code)}</p>
+                <p className="text-[14px] font-semibold">{formatMoney(i.original_total ?? i.total, order.currency_code)}</p>
               </li>
             ))}
           </ul>

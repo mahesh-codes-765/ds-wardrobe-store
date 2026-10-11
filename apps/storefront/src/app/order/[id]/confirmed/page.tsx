@@ -43,12 +43,12 @@ export default async function OrderConfirmedPage({ params }: Props) {
                 <p className="font-semibold">{item.product_title ?? item.title}</p>
                 <p className="text-ash">{item.variant_title} &middot; Qty {item.quantity}</p>
               </div>
-              <p className="text-[14px] font-semibold">{formatMoney(item.total, order.currency_code)}</p>
+              <p className="text-[14px] font-semibold">{formatMoney(item.original_total ?? item.total, order.currency_code)}</p>
             </li>
           ))}
         </ul>
         <dl className="mt-4 space-y-2 border-t border-line pt-4 text-[14px]">
-          <div className="flex justify-between"><dt className="text-ink-soft">Subtotal</dt><dd>{formatMoney(order.item_total, order.currency_code)}</dd></div>
+          <div className="flex justify-between"><dt className="text-ink-soft">Subtotal</dt><dd>{formatMoney(order.original_item_total ?? order.item_total, order.currency_code)}</dd></div>
           {order.discount_total ? (
             <div className="flex justify-between"><dt className="text-ink-soft">Discount</dt><dd className="text-success">- {formatMoney(order.discount_total, order.currency_code)}</dd></div>
           ) : null}

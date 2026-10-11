@@ -102,6 +102,10 @@ export function ProductView({ product, saved, rating }: Props) {
   const submit = (goToCheckout: boolean) => {
     if (missing) {
       setError(`Please select a ${missing.title.toLowerCase()}`)
+      // On mobile the sticky bar can be far from the options - bring them into view.
+      document
+        .getElementById(`option-${missing.title.toLowerCase()}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" })
       return
     }
     if (!variant || !isVariantInStock(variant)) {
@@ -163,7 +167,7 @@ export function ProductView({ product, saved, rating }: Props) {
               const isColour = /colou?r/i.test(option.title)
               const isSizeLike = /size|waist|volume/i.test(option.title)
               return (
-                <fieldset key={option.title}>
+                <fieldset key={option.title} id={`option-${option.title.toLowerCase()}`} className="scroll-mt-28">
                   <div className="mb-3 flex items-center justify-between">
                     <legend className="text-xs font-semibold uppercase tracking-[0.16em]">
                       {option.title}

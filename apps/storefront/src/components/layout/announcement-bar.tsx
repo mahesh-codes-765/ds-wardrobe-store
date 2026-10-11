@@ -24,7 +24,7 @@ export function AnnouncementBar({ messages }: { messages: Message[] }) {
 
   return (
     <div className="bg-ink text-ivory">
-      <div className="container-ds flex h-9 items-center justify-center text-center text-[11px] font-semibold uppercase tracking-[0.18em] sm:text-xs">
+      <div className="container-ds flex min-h-9 items-center justify-center py-1.5 text-center text-[10px] font-semibold uppercase leading-snug tracking-[0.14em] sm:text-xs sm:tracking-[0.18em]">
         {message.href ? (
           <Link href={message.href} className="hover:underline">
             {content}

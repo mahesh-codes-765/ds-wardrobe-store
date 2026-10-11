@@ -20,14 +20,16 @@ export function LineItem({ item, currency, compact, onNavigate }: Props) {
   const [pending, start] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const variant = item.variant
-  const maxQty =
-    variant?.manage_inventory && !variant.allow_backorder
-      ? Math.min(10, Math.max(item.quantity, variant.inventory_quantity ?? item.quantity))
-      : 10
+  // The cart API doesn't compute inventory_quantity; only trust it when present.
+  // The backend rejects quantities above available stock either way.
+  const knownStock =
+    variant?.manage_inventory && !variant.allow_backorder && typeof variant.inventory_quantity === "number"
+      ? variant.inventory_quantity
+      : null
+  const maxQty = knownStock === null ? 10 : Math.min(10, Math.max(item.quantity, knownStock))
   const href = item.product_handle ? `/products/${item.product_handle}` : "#"
   const compareAt = (item as { compare_at_unit_price?: number | null }).compare_at_unit_price
-  const outOfStock =
-    variant?.manage_inventory && !variant.allow_backorder && (variant.inventory_quantity ?? 0) < item.quantity
+  const outOfStock = knownStock !== null && knownStock < item.quantity
 
   const change = (quantity: number) => {
     setError(null)
@@ -62,7 +64,7 @@ export function LineItem({ item, currency, compact, onNavigate }: Props) {
             ) : null}
           </div>
           <div className="text-right">
-            <p className="text-[15px] font-semibold">{formatMoney(item.total ?? item.unit_price * item.quantity, currency)}</p>
+            <p className="text-[15px] font-semibold">{formatMoney(item.original_total ?? item.total ?? item.unit_price * item.quantity, currency)}</p>
             {compareAt && compareAt > item.unit_price ? (
               <s className="text-xs text-ash">{formatMoney(compareAt * item.quantity, currency)}</s>
             ) : null}
@@ -104,7 +106,7 @@ export function LineItem({ item, currency, compact, onNavigate }: Props) {
           </button>
         </div>
         {outOfStock ? (
-          <p className="mt-2 text-[13px] text-ember">Only {Math.max(0, variant?.inventory_quantity ?? 0)} left - please reduce the quantity.</p>
+          <p className="mt-2 text-[13px] text-ember">Only {Math.max(0, knownStock ?? 0)} left - please reduce the quantity.</p>
         ) : null}
         {error ? <p className="mt-2 text-[13px] text-ember">{error}</p> : null}
       </div>

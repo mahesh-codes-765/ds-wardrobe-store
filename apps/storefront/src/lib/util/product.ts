@@ -119,15 +119,18 @@ export function imagesForVariant(
   variant?: HttpTypes.StoreProductVariant | null
 ): string[] {
   const gallery = (product.images ?? []).map((i) => i.url).filter(Boolean) as string[]
-  const variantImages =
+  // Medusa falls back to all product images when a variant has none of its own,
+  // so variant.images only counts as variant-specific when it is a real subset.
+  const rawVariantImages =
     (variant as { images?: { url: string }[] } | undefined)?.images?.map((i) => i.url) ?? []
+  const variantImages = rawVariantImages.length < gallery.length ? rawVariantImages : []
   const metadataImages = String(
     (variant?.metadata as Record<string, unknown> | undefined)?.images ?? ""
   )
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean)
-  const ordered = Array.from(new Set([...variantImages, ...metadataImages, ...gallery]))
+  const ordered = Array.from(new Set([...metadataImages, ...variantImages, ...gallery]))
   if (!ordered.length && product.thumbnail) ordered.push(product.thumbnail)
   return ordered
 }

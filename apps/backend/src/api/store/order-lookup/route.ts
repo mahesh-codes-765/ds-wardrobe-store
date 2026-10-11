@@ -35,6 +35,7 @@ export const POST = async (req: MedusaRequest<StoreOrderLookupType>, res: Medusa
       "items.quantity",
       "items.unit_price",
       "items.total",
+      "items.original_total",
       "items.variant_title",
       "items.product_handle",
       "shipping_address.first_name",

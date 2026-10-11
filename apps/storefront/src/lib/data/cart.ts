@@ -1,7 +1,7 @@
 "use server"
 
 import type { HttpTypes } from "@medusajs/types"
-import { revalidatePath } from "next/cache"
+import { refresh } from "next/cache"
 import { z } from "zod"
 import { sdk } from "../sdk"
 import { errorMessage, type ActionResult } from "../util/errors"
@@ -67,7 +67,7 @@ async function getOrCreateCart(): Promise<HttpTypes.StoreCart> {
 }
 
 function done() {
-  revalidatePath("/", "layout")
+  refresh()
 }
 
 const quantity = z.coerce.number().int().min(1).max(10)
@@ -316,7 +316,7 @@ export async function placeOrder(): Promise<ActionResult<{ orderId: string }>> {
           .update({ metadata: { cart_id: null } }, {}, headers)
           .catch(() => undefined)
       }
-      revalidatePath("/", "layout")
+      refresh()
       return { ok: true, data: { orderId: result.order.id } }
     }
     return {

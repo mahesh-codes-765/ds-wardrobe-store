@@ -10,6 +10,7 @@
  */
 import EmbeddedPostgres from "embedded-postgres"
 import { existsSync } from "node:fs"
+import net from "node:net"
 import { fileURLToPath } from "node:url"
 import path from "node:path"
 
@@ -20,6 +21,21 @@ const user = process.env.PG_USER ?? "postgres"
 const password = process.env.PG_PASSWORD ?? "postgres"
 const port = Number(process.env.PG_PORT ?? 5432)
 const database = process.env.PG_DATABASE ?? "ds_wardrobe"
+
+// If something already listens on the port (e.g. a previous run that was not
+// stopped cleanly), reuse it instead of failing with a cryptic error.
+const portInUse = await new Promise((resolve) => {
+  const socket = net.connect({ port, host: "127.0.0.1" })
+  socket.once("connect", () => {
+    socket.destroy()
+    resolve(true)
+  })
+  socket.once("error", () => resolve(false))
+})
+if (portInUse) {
+  console.log(`[dev-db] port ${port} is already in use - PostgreSQL is probably already running. Nothing to do.`)
+  process.exit(0)
+}
 
 const pg = new EmbeddedPostgres({
   databaseDir,

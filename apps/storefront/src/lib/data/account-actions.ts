@@ -1,7 +1,7 @@
 "use server"
 
 import type { HttpTypes } from "@medusajs/types"
-import { revalidatePath } from "next/cache"
+import { refresh } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
 import { sdk } from "../sdk"
@@ -84,7 +84,7 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
         : msg,
     }
   }
-  revalidatePath("/", "layout")
+  refresh()
   redirect(safeRedirectPath(formData.get("redirect")))
 }
 
@@ -119,7 +119,7 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
         : msg || "We couldn't create your account. Please try again.",
     }
   }
-  revalidatePath("/", "layout")
+  refresh()
   redirect(safeRedirectPath(formData.get("redirect")))
 }
 
@@ -131,7 +131,7 @@ export async function logout() {
       .catch(() => undefined)
   }
   await removeAuthToken()
-  revalidatePath("/", "layout")
+  refresh()
   redirect("/")
 }
 
@@ -145,7 +145,7 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
   } catch (e) {
     return { error: errorMessage(e) }
   }
-  revalidatePath("/account", "layout")
+  refresh()
   return { success: "Profile updated" }
 }
 
@@ -183,14 +183,14 @@ export async function saveAddress(_prev: FormState, formData: FormData): Promise
   } catch (e) {
     return { error: errorMessage(e) }
   }
-  revalidatePath("/account/addresses")
+  refresh()
   return { success: "Address saved" }
 }
 
 export async function deleteAddress(addressId: string): Promise<ActionResult> {
   try {
     await sdk.store.customer.deleteAddress(addressId, await getAuthHeaders())
-    revalidatePath("/account/addresses")
+    refresh()
     return { ok: true }
   } catch (e) {
     return { ok: false, error: errorMessage(e) }
@@ -218,7 +218,7 @@ export async function toggleWishlist(
         body: { product_id: productId },
       })
     }
-    revalidatePath("/account/wishlist")
+    refresh()
     return { ok: true, data: { saved: !saved } }
   } catch (e) {
     return { ok: false, error: errorMessage(e) }
@@ -264,7 +264,7 @@ export type TrackedOrder = {
   total: number
   payment_status?: string
   fulfillment_status?: string
-  items: { id: string; title: string; subtitle?: string; thumbnail?: string; quantity: number; total: number; variant_title?: string; product_handle?: string }[]
+  items: { id: string; title: string; subtitle?: string; thumbnail?: string; quantity: number; total: number; original_total?: number; variant_title?: string; product_handle?: string }[]
   shipping_address?: Record<string, string | null>
   shipping_methods?: { name: string }[]
   fulfillments?: {

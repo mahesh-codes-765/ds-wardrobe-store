@@ -28,7 +28,7 @@ export function CartDrawer({ cart }: { cart: HttpTypes.StoreCart | null }) {
           <div className="space-y-4">
             <div className="flex items-baseline justify-between">
               <span className="text-sm font-semibold uppercase tracking-[0.14em]">Subtotal</span>
-              <span className="text-lg font-semibold">{formatMoney(itemTotal, currency)}</span>
+              <span className="text-lg font-semibold">{formatMoney(cart?.original_item_total ?? itemTotal, currency)}</span>
             </div>
             <p className="text-xs text-ash">Inclusive of GST. Shipping and coupons calculated at checkout.</p>
             <div className="grid grid-cols-2 gap-3">

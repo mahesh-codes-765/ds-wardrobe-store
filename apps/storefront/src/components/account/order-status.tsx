@@ -22,8 +22,13 @@ const fmt = (d?: string | Date | null) =>
   d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : null
 
 /** Human readable status label for badges and lists. */
-export function orderStatusLabel(order: Pick<OrderLike, "status" | "fulfillment_status">) {
+export function orderStatusLabel(order: Pick<OrderLike, "status" | "fulfillment_status"> & { fulfillments?: Fulfillment[] | null }) {
   if (order.status === "canceled") return "Cancelled"
+  // Prefer the fulfilment timestamps (always present) over the aggregated status field.
+  const active = (order.fulfillments ?? []).filter((f) => !f.canceled_at)
+  if (active.some((f) => f.delivered_at)) return "Delivered"
+  if (active.some((f) => f.shipped_at)) return "Shipped"
+  if (active.length) return "Packed"
   switch (order.fulfillment_status) {
     case "delivered":
       return "Delivered"
