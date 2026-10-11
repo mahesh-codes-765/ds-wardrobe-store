@@ -56,7 +56,8 @@ export const POST = async (req: MedusaRequest<StoreOrderLookupType>, res: Medusa
       "fulfillments.labels.tracking_number",
       "fulfillments.labels.tracking_url",
     ],
-    filters: { display_id },
+    // Generated graph types declare display_id filters as strings; Postgres casts it.
+    filters: { display_id: String(display_id) },
   })
 
   const order = orders.find((o: any) => (o.email ?? "").toLowerCase() === email)

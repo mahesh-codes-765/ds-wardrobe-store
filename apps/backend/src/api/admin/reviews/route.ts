@@ -27,7 +27,7 @@ export const GET = async (
         filters: { id: productIds },
       })
     : { data: [] as any[] }
-  const byId = new Map(products.map((p: any) => [p.id, p]))
+  const byId = new Map<string, unknown>(products.map((p: any) => [p.id, p] as const))
 
   res.json({
     reviews: reviews.map((r) => ({ ...r, product: byId.get(r.product_id) ?? null })),
