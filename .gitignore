@@ -62,3 +62,8 @@ apps/backend/uploads
 apps/backend/.medusa
 *.tsbuildinfo
 next-env.d.ts
+
+# Netlify CLI link state
+.netlify
+# Deployment-only secrets (e.g. production DATABASE_URL)
+**/.env.deploy

@@ -17,5 +17,6 @@ ENV NODE_ENV=production
 COPY --from=build /app/apps/backend/.medusa/server ./
 RUN npm install --omit=dev --ignore-scripts && npm cache clean --force
 EXPOSE 9000
-# Migrations are idempotent; run them on start so a new image never serves an old schema.
-CMD ["sh", "-c", "npx medusa db:migrate && npx medusa db:migrate:search && npx medusa start"]
+# Migrations are idempotent and run on start by default so a new image never serves an
+# old schema. Set RUN_MIGRATIONS=false to skip them (e.g. free hosting with slow wake-ups).
+CMD ["sh", "-c", "if [ \"$RUN_MIGRATIONS\" != \"false\" ]; then npx medusa db:migrate && npx medusa db:migrate:search; fi && npx medusa start"]
